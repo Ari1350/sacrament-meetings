@@ -8,11 +8,19 @@ interface MeetingPageProps {
   params: Promise<{ id: string }>;
 }
 
+function getBaseUrl() {
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`;
+  }
+
+  return "http://localhost:3000";
+}
+
 export default async function MeetingPage({ params }: MeetingPageProps) {
   const { id } = await params;
 
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000"}/api/meetings/${id}`,
+    `${getBaseUrl()}/api/meetings/${id}`,
     { cache: "no-store" },
   );
 
@@ -20,7 +28,11 @@ export default async function MeetingPage({ params }: MeetingPageProps) {
     return (
       <section>
         <h1 className="text-2xl font-bold">Meeting not found</h1>
-        <Link href="/meetings" className="mt-4 inline-block text-blue-700">
+
+        <Link
+          href="/meetings"
+          className="mt-4 inline-block text-blue-700"
+        >
           ← Back to meetings
         </Link>
       </section>
