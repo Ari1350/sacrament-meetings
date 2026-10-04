@@ -1,8 +1,19 @@
+import { NextResponse } from 'next/server';
 import { getMeetings } from "@/lib/meetings-db";
 
 export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const date = searchParams.get("date");
+  try {
+    const { searchParams } = new URL(request.url);
+    const dateParam = searchParams.get("date");
 
-  return Response.json(getMeetings(date));
+    const meetings = await getMeetings(dateParam ?? undefined);
+
+    return NextResponse.json(meetings);
+  } catch (error) {
+    console.error('API Error:', error);
+    return NextResponse.json(
+      { error: 'Internal Server Error: Failed to fetch sacrament meetings.' },
+      { status: 500 }
+    );
+  }
 }

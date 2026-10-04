@@ -1,203 +1,144 @@
-import type { SacramentMeeting } from "./types";
+import { sql } from '@vercel/postgres';
 
-const meetings: SacramentMeeting[] = [
-  {
-    id: 1,
-    date: "2026-09-06",
-    meetingType: "regular",
-    presiding: "Bishop Carlos Mendoza",
-    conducting: "Brother Daniel Flores",
-    announcements: [
-      "Ward activity next Saturday.",
-      "Temple recommend interviews this week.",
-    ],
-    openingHymn: {
-      number: 2,
-      title: "The Spirit of God",
-    },
-    openingPrayer: "Sister Maria Lopez",
-    wardBusiness: [
-      {
-        description: "Sustaining of new Primary presidency.",
-      },
-    ],
-    stakeBusiness: false,
-    sacramentHymn: {
-      number: 169,
-      title: "In Remembrance of Thy Suffering",
-    },
-    speakers: [
-      {
-        name: "Sister Ana Garcia",
-        topic: "Faith in Jesus Christ",
-        type: "speaker",
-      },
-      {
-        name: "Youth Choir",
-        topic: "I Am a Child of God",
-        type: "musical-number",
-      },
-    ],
-    closingHymn: {
-      number: 31,
-      title: "O God, Our Help in Ages Past",
-    },
-    closingPrayer: "Brother Luis Perez",
-  },
-
-  {
-    id: 2,
-    date: "2026-09-13",
-    meetingType: "testimony",
-    presiding: "Bishop Carlos Mendoza",
-    conducting: "Sister Elena Ruiz",
-    announcements: [
-      "Youth activity on Friday.",
-    ],
-    openingHymn: {
-      number: 85,
-      title: "How Firm a Foundation",
-    },
-    openingPrayer: "Brother Pedro Ramos",
-    wardBusiness: [],
-    stakeBusiness: false,
-    sacramentHymn: {
-      number: 193,
-      title: "I Stand All Amazed",
-    },
-    speakers: [],
-    closingHymn: {
-      number: 5,
-      title: "High on the Mountain Top",
-    },
-    closingPrayer: "Sister Laura Torres",
-  },
-
-  {
-    id: 3,
-    date: "2026-09-20",
-    meetingType: "regular",
-    presiding: "Bishop Carlos Mendoza",
-    conducting: "Brother Daniel Flores",
-    announcements: [
-      "Family history class on Wednesday.",
-      "Relief Society activity this month.",
-    ],
-    openingHymn: {
-      number: 96,
-      title: "I Need Thee Every Hour",
-    },
-    openingPrayer: "Sister Julia Castro",
-    wardBusiness: [
-      {
-        description: "Sustaining of a new Sunday School teacher.",
-      },
-    ],
-    stakeBusiness: true,
-    sacramentHymn: {
-      number: 181,
-      title: "Jesus of Nazareth, Savior and King",
-    },
-    speakers: [
-      {
-        name: "Brother Miguel Santos",
-        topic: "Service in the Church",
-        type: "speaker",
-      },
-      {
-        name: "Sister Sofia Morales",
-        topic: "Following the Savior",
-        type: "speaker",
-      },
-    ],
-    closingHymn: {
-      number: 219,
-      title: "Because I Have Been Given Much",
-    },
-    closingPrayer: "Brother Andres Vega",
-  },
-
-  {
-    id: 4,
-    date: "2026-09-27",
-    meetingType: "general",
-    presiding: "Stake President Robert Smith",
-    conducting: "Brother John Brown",
-    announcements: [
-      "Stake conference information.",
-    ],
-    openingHymn: {
-      number: 1,
-      title: "The Morning Breaks",
-    },
-    openingPrayer: "Sister Rebecca Wilson",
-    wardBusiness: [],
-    stakeBusiness: true,
-    sacramentHymn: {
-      number: 172,
-      title: "In Humility, Our Savior",
-    },
-    speakers: [
-      {
-        name: "President Robert Smith",
-        topic: "Strengthening Families",
-        type: "speaker",
-      },
-    ],
-    closingHymn: {
-      number: 30,
-      title: "Come, Come, Ye Saints",
-    },
-    closingPrayer: "Brother Thomas Green",
-  },
-
-  {
-    id: 5,
-    date: "2026-10-04",
-    meetingType: "regular",
-    presiding: "Bishop Carlos Mendoza",
-    conducting: "Sister Elena Ruiz",
-    announcements: [
-      "General conference follow-up meeting.",
-    ],
-    openingHymn: {
-      number: 66,
-      title: "Rejoice, the Lord Is King",
-    },
-    openingPrayer: "Brother David Clark",
-    wardBusiness: [],
-    stakeBusiness: false,
-    sacramentHymn: {
-      number: 175,
-      title: "O God, the Eternal Father",
-    },
-    speakers: [
-      {
-        name: "Sister Emily White",
-        topic: "The Importance of Prayer",
-        type: "speaker",
-      },
-    ],
-    closingHymn: {
-      number: 152,
-      title: "God Be with You Till We Meet Again",
-    },
-    closingPrayer: "Sister Rachel Young",
-  },
-];
-
-export function getMeetings(
-  date?: string | null
-): SacramentMeeting[] {
-  if (date) {
-    return meetings.filter((meeting) => meeting.date === date);
-  }
-
-  return meetings;
+export interface Meeting {
+  id: string;
+  date: string;
+  conducting: string;
+  opening_hymn: string;
+  sacrament_hymn: string;
+  closing_hymn: string;
 }
 
-export function getMeetingById(
-  id: number
-): SacramentMeeting | null {
-  return meetings.find((meeting) => meeting.id === id) ?? null;
+export async function fetchMeetings(
+  date?: string | Date | number
+): Promise<Meeting[]> {
+  try {
+    if (date !== undefined) {
+      const dateValue =
+        date instanceof Date
+          ? date.toISOString().split('T')[0]
+          : String(date);
+
+      const data = await sql<Meeting>`
+        SELECT
+          id,
+          date,
+          conducting,
+          opening_hymn,
+          sacrament_hymn,
+          closing_hymn
+        FROM meetings
+        WHERE date = ${dateValue}
+        ORDER BY date DESC
+      `;
+
+      return data.rows;
+    }
+
+    const data = await sql<Meeting>`
+      SELECT
+        id,
+        date,
+        conducting,
+        opening_hymn,
+        sacrament_hymn,
+        closing_hymn
+      FROM meetings
+      ORDER BY date DESC
+    `;
+
+    return data.rows;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to load sacrament meetings.');
+  }
+}
+
+/* Compatibility wrapper for the project\'s existing code */
+export const getMeetings = fetchMeetings;
+
+export async function getMeetingById(
+  id: string | number
+): Promise<Meeting | null> {
+  try {
+    const meetingId = String(id);
+
+    const data = await sql<Meeting>`
+      SELECT
+        id,
+        date,
+        conducting,
+        opening_hymn,
+        sacrament_hymn,
+        closing_hymn
+      FROM meetings
+      WHERE id = ${meetingId}
+    `;
+
+    return data.rows[0] ?? null;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch the sacrament meeting details.');
+  }
+}
+
+export async function insertMeeting(
+  meeting: Omit<Meeting, 'id'>
+): Promise<void> {
+  try {
+    await sql`
+      INSERT INTO meetings (
+        date,
+        conducting,
+        opening_hymn,
+        sacrament_hymn,
+        closing_hymn
+      )
+      VALUES (
+        ${meeting.date},
+        ${meeting.conducting},
+        ${meeting.opening_hymn},
+        ${meeting.sacrament_hymn},
+        ${meeting.closing_hymn}
+      )
+    `;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to create the sacrament meeting.');
+  }
+}
+
+export async function updateMeetingDb(
+  id: string | number,
+  meeting: Omit<Meeting, 'id'>
+): Promise<void> {
+  try {
+    await sql`
+      UPDATE meetings
+      SET
+        date = ${meeting.date},
+        conducting = ${meeting.conducting},
+        opening_hymn = ${meeting.opening_hymn},
+        sacrament_hymn = ${meeting.sacrament_hymn},
+        closing_hymn = ${meeting.closing_hymn}
+      WHERE id = ${String(id)}
+    `;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to update the sacrament meeting.');
+  }
+}
+
+export async function deleteMeetingDb(
+  id: string | number
+): Promise<void> {
+  try {
+    await sql`
+      DELETE FROM meetings
+      WHERE id = ${String(id)}
+    `;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to delete the sacrament meeting.');
+  }
 }
