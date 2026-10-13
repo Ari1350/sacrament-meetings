@@ -9,8 +9,16 @@ const geist = Geist({
 });
 
 export const metadata: Metadata = {
-  title: "Sacrament Meetings",
-  description: "Sacrament meeting planner",
+  title: {
+    default: "Sacrament Meeting Planner",
+    template: "%s | Sacrament Planner",
+  },
+  description: "Plan and manage ward sacrament meetings efficiently.",
+  openGraph: {
+    title: "Sacrament Meeting Planner",
+    description: "Plan and manage ward sacrament meetings efficiently.",
+    type: "website",
+  },
 };
 
 export default function RootLayout({

@@ -3,6 +3,7 @@ import MeetingCard from "@/components/MeetingCard";
 import type { SacramentMeeting } from "@/lib/types";
 import DeleteButton from './DeleteButton';
 import Link from 'next/link';
+import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
 
@@ -13,6 +14,11 @@ function getBaseUrl() {
 
   return "http://localhost:3000";
 }
+
+export const metadata: Metadata = {
+  title: "Manage Meetings",
+  description: "Create, edit, and organize the sacrament meeting agenda.",
+};
 
 export default async function MeetingsPage() {
   const response = await fetch(`${getBaseUrl()}/api/meetings`, {
