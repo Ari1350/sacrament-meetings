@@ -43,7 +43,7 @@ A modern Next.js web application built with TypeScript and Tailwind CSS for orga
 
 ## Production Deployment (Vercel)
 This project is configured for automated builds on the **Vercel Platform**. 
-*   **Production Deployment URL:** [https://vercel.app](https://vercel.app)
+*   **Production Deployment URL:** https://sacrament-meetings-git-peer-code-review-ari1350s-projects.vercel.app/login 
 *   *Note:* Ensure that the environment variable `AUTH_SECRET` is added to the Vercel Project Dashboard under Settings -> Environment Variables before building.
 
 ## API Notes & Route Handlers
