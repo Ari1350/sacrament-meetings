@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Sacrament Meetings Planner
 
-## Getting Started
+A modern Next.js web application built with TypeScript and Tailwind CSS for organizing, managing, and viewing ward sacrament meeting agendas efficiently.
 
-First, run the development server:
+##  Author & Team
+*   **Individual Developer:** Ari1350 (Completed individually to maintain milestones following a hardware recovery process).
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Features
+*   **Meeting Management:** Browse upcoming sacrament meetings, view detailed agendas, and display the current week's schedule.
+*   **Security & Authentication:** Fully integrated with **Auth.js v5 (NextAuth.js)** credentials strategy to protect bishopric administrative routes.
+*   **Dynamic Metadata:** Optimized with custom page-level titles and Open Graph metadata rules across layouts and subroutes for production quality.
+*   **Architecture Quality:** Implements Next.js App Router conventions with distinct Client and Server boundaries.
+*   **Responsive UX:** Styled with Tailwind CSS to ensure mobile-first layouts and accessible viewing experiences.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Technologies Used
+*   Next.js (App Router)
+*   React & TypeScript
+*   Tailwind CSS
+*   Auth.js (v5 Beta)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Getting Started Locally
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Clone the repository and navigate into the project directory:
+   ```bash
+   cd sacrament-meetings
+   ```
 
-## Learn More
+2. Install all dependencies:
+   ```bash
+   npm install
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+3. Create an environment file named `.env.local` in the project root and add a secure secret string:
+   ```env
+   AUTH_SECRET="your-long-random-secure-secret-key-phrase"
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+4. Run the local development server:
+   ```bash
+   npm run dev
+   ```
+   Open [http://localhost:3000](http://localhost:3000) in your browser to view the application.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Production Deployment (Vercel)
+This project is configured for automated builds on the **Vercel Platform**. 
+*   **Production Deployment URL:** [https://vercel.app](https://vercel.app)
+*   *Note:* Ensure that the environment variable `AUTH_SECRET` is added to the Vercel Project Dashboard under Settings -> Environment Variables before building.
 
-## Deploy on Vercel
+## API Notes & Route Handlers
+The application hosts the following core database-backed API endpoint to serve content to client components:
+*   `GET /api/auth/[...nextauth]` - Handles OAuth, token verification, and administrative session management.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Demo Credentials
+To review protected dashboards and mock CRUD structures, use the following credentials on the `/login` route:
+*   **Email:** `bishopric@church.org`
+*   **Password:** `password123`
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Known Issues & Future Opportunities
+*   **Synchronization:** Minor branch divergence caused Vercel deployment routes to lag slightly behind local pushes; resolved by migrating active modules directly to the `peer-code-review` branch.
+*   **Future Upgrades:** Plan to integrate a live database adapter (Prisma/Supabase) to replace static credential verification for complex multi-model CRUD persistence.
